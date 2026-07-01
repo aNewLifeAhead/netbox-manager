@@ -45,6 +45,7 @@ def copy_fields(template, target_model, device):
     }
 
     target_fields = {f.name for f in target_model._meta.fields}
+
     skip = {
         "id",
         "created",
@@ -71,7 +72,6 @@ def copy_fields(template, target_model, device):
 
 def sync_simple_component(device, template_model, target_model):
     created = 0
-
     templates = template_model.objects.filter(device_type=device.device_type)
 
     for template in templates:
@@ -93,7 +93,6 @@ def sync_simple_component(device, template_model, target_model):
 
 def sync_front_ports(device):
     created = 0
-
     templates = FrontPortTemplate.objects.filter(device_type=device.device_type)
 
     for template in templates:
@@ -131,7 +130,6 @@ def sync_front_ports(device):
 
 def main():
     device_types = DeviceType.objects.all().order_by("manufacturer__name", "model")
-
     grand_total = 0
 
     for device_type in device_types:
@@ -159,7 +157,7 @@ def main():
                     target_model,
                 )
 
-            # Front ports need rear ports to exist first.
+            # Front ports depend on rear ports existing first.
             device_total += sync_front_ports(device)
 
             if device_total == 0:
