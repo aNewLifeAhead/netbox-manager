@@ -1,13 +1,6 @@
-import os
-import django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "netbox.settings")
-django.setup()
-
 from dcim.models import (
     Device,
     DeviceType,
-
     InterfaceTemplate,
     ConsolePortTemplate,
     ConsoleServerPortTemplate,
@@ -17,7 +10,6 @@ from dcim.models import (
     FrontPortTemplate,
     ModuleBayTemplate,
     DeviceBayTemplate,
-
     Interface,
     ConsolePort,
     ConsoleServerPort,
@@ -30,7 +22,7 @@ from dcim.models import (
 )
 
 
-DEVICE_TYPE_NAME = "Ubiquiti Edgeswitch POE+ 48 (750W)"
+# True = preview only. False = actually create missing components.
 DRY_RUN = True
 
 
@@ -117,7 +109,10 @@ def sync_front_ports(device):
             ).first()
 
             if not rear_port:
-                print(f"  SKIP FrontPort {template.name}: missing rear port {template.rear_port.name}")
+                print(
+                    f"  SKIP FrontPort {template.name}: "
+                    f"missing rear port {template.rear_port.name}"
+                )
                 continue
 
         data = copy_fields(template, FrontPort, device)
@@ -135,35 +130,53 @@ def sync_front_ports(device):
 
 
 def main():
-    device_type = DeviceType.objects.get(model=DEVICE_TYPE_NAME)
-    devices = Device.objects.filter(device_type=device_type)
+    device_types = DeviceType.objects.all().order_by("manufacturer__name", "model")
 
-    print(f"Device Type: {device_type}")
-    print(f"Devices found: {devices.count()}")
-    print(f"Dry run: {DRY_RUN}")
-    print()
+    grand_total = 0
 
-    total = 0
+    for device_type in device_types:
+        devices = Device.objects.filter(device_type=device_type)
 
-    for device in devices:
-        print(f"{device.name}")
+        if not devices.exists():
+            continue
 
-        device_total = 0
-
-        for template_model, target_model in SIMPLE_COMPONENTS:
-            device_total += sync_simple_component(device, template_model, target_model)
-
-        # Front ports need rear ports to exist first.
-        device_total += sync_front_ports(device)
-
-        if device_total == 0:
-            print("  Already up to date")
-
-        total += device_total
+        print(f"Device Type: {device_type}")
+        print(f"Devices found: {devices.count()}")
+        print(f"Dry run: {DRY_RUN}")
         print()
 
-    print(f"Total components {'that would be added' if DRY_RUN else 'added'}: {total}")
+        total = 0
+
+        for device in devices:
+            print(f"{device.name}")
+
+            device_total = 0
+
+            for template_model, target_model in SIMPLE_COMPONENTS:
+                device_total += sync_simple_component(
+                    device,
+                    template_model,
+                    target_model,
+                )
+
+            # Front ports need rear ports to exist first.
+            device_total += sync_front_ports(device)
+
+            if device_total == 0:
+                print("  Already up to date")
+
+            total += device_total
+            print()
+
+        print(f"Total for {device_type}: {total}")
+        print("-" * 60)
+
+        grand_total += total
+
+    print(
+        f"Grand total components "
+        f"{'that would be added' if DRY_RUN else 'added'}: {grand_total}"
+    )
 
 
-if __name__ == "__main__":
-    main()
+main()
