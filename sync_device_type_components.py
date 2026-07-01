@@ -146,7 +146,12 @@ def main():
         total = 0
 
         for device in devices:
-            print(f"{device.name}")
+            identifier = (
+                device.name
+                or device.asset_tag
+                or f"Device #{device.pk}"
+            )
+            print(identifier)
 
             device_total = 0
 
@@ -157,7 +162,6 @@ def main():
                     target_model,
                 )
 
-            # Front ports depend on rear ports existing first.
             device_total += sync_front_ports(device)
 
             if device_total == 0:
