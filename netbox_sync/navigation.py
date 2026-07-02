@@ -1,7 +1,7 @@
 from netbox.plugins import PluginMenu, PluginMenuItem
 
 menu = PluginMenu(
-    label="NetBox Sync",
+    label="CJ's NetBox Sync",
     groups=(
         (
             "Tools",

@@ -1,31 +1,68 @@
 {% extends 'base/layout.html' %}
 
-{% block title %}Device Type Sync{% endblock %}
+{% block title %}CJ's NetBox Sync{% endblock %}
 
 {% block content %}
-<div class="card">
-  <h5 class="card-header">Device Type Sync</h5>
-  <div class="card-body">
-    <form method="post">
-      {% csrf_token %}
 
-      <div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" name="commit" id="commit">
-        <label class="form-check-label" for="commit">
-          Commit changes
-        </label>
-      </div>
+<div class="card mb-3">
+    <div class="card-header">
+        <strong>CJ's NetBox Sync</strong>
+    </div>
 
-      <button type="submit" class="btn btn-primary">
-        Run Sync
-      </button>
-    </form>
+    <div class="card-body">
+        <p>
+            This tool synchronises existing devices with the component templates
+            defined on their Device Type.
+        </p>
 
-    {% if output %}
-      <hr>
-      <h6>Output</h6>
-      <pre style="white-space: pre-wrap;">{{ output }}</pre>
-    {% endif %}
-  </div>
+        <p class="mb-0">
+            Missing components are created automatically.
+            Existing components are <strong>never modified or deleted</strong>.
+        </p>
+    </div>
 </div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        Run Synchronisation
+    </div>
+
+    <div class="card-body">
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-check mb-3">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="commit"
+                    name="commit">
+
+                <label class="form-check-label" for="commit">
+                    Commit Changes
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Run Sync
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{% if output %}
+<div class="card">
+    <div class="card-header">
+        Output
+    </div>
+
+    <div class="card-body">
+        <pre style="white-space: pre-wrap;">{{ output }}</pre>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}
