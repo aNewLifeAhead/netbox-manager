@@ -6,7 +6,7 @@ class NetBoxSyncConfig(PluginConfig):
     verbose_name = "NetBox Sync"
     description = "Custom NetBox sync utilities"
     version = "0.1.0"
-    base_url = "netbox-sync"
+    base_url = "https://github.com/aNewLifeAhead/netbox-sync"
 
 
 config = NetBoxSyncConfig
