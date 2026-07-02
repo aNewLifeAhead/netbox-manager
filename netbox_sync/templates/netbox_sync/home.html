@@ -1,0 +1,15 @@
+{% extends 'generic/object.html' %}
+
+{% block title %}Device Type Sync{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h5 class="card-header">Device Type Sync</h5>
+  <div class="card-body">
+    <p>Your management command is installed.</p>
+
+    <pre>python manage.py sync_device_type_components</pre>
+    <pre>python manage.py sync_device_type_components --commit</pre>
+  </div>
+</div>
+{% endblock %}
