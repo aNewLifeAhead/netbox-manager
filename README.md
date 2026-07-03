@@ -35,7 +35,7 @@ The aim of this project is to maintain a single Excel workbook as the source of 
 
 # Project Structure
 
-```
+```text
 netbox-manager/
 │
 ├── data/
@@ -43,10 +43,14 @@ netbox-manager/
 │
 ├── netbox_manager/
 │   ├── client.py
+│   ├── defaults.py
 │   ├── devices.py
+│   ├── excel.py
 │   ├── locations.py
 │   ├── main.py
-│   └── util.py
+│   ├── netbox_lookup.py
+│   ├── util.py
+│   └── wallplates.py
 │
 ├── requirements.txt
 ├── README.md
@@ -59,7 +63,7 @@ netbox-manager/
 
 The only source of truth is:
 
-```
+```text
 data/FIX8 Network.xlsx
 ```
 
@@ -87,7 +91,7 @@ Future worksheets:
 
 Sheet name:
 
-```
+```text
 wallplates
 ```
 
@@ -128,19 +132,19 @@ Example:
 
 # Installation
 
-Create a virtual environment
+Create a virtual environment:
 
 ```bash
 python3 -m venv .venv
 ```
 
-Activate it
+Activate it:
 
 ```bash
 source .venv/bin/activate
 ```
 
-Install requirements
+Install requirements:
 
 ```bash
 pip install -r requirements.txt
@@ -167,6 +171,22 @@ VERIFY_SSL=false
 ---
 
 # Commands
+
+## VS Code Sync Button
+
+This project can be run from VS Code using Tasks.
+
+Recommended tasks:
+
+- `NetBox: Test API`
+- `NetBox: Dry Run Wallplates`
+- `NetBox: Sync Wallplates`
+
+Create `.vscode/tasks.json`, then run tasks from:
+
+```text
+Terminal → Run Task...
+```
 
 ## Test API
 
@@ -215,7 +235,7 @@ Creates new wall plates and updates existing ones.
 
 ## Milestone 2
 
-- Location synchronisation
+- Cable synchronisation
 - Patch Panel synchronisation
 - Switch synchronisation
 
@@ -241,7 +261,7 @@ This project deliberately avoids NetBox CSV imports.
 
 Instead:
 
-```
+```text
 Excel Workbook
         ↓
  NetBox Manager
