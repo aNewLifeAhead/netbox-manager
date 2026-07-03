@@ -3,7 +3,7 @@ import sys
 import click
 
 from netbox_manager.client import get_netbox
-from netbox_manager.devices import sync_wallplates
+from netbox_manager.wallplates import sync_wallplates
 
 
 @click.group()
