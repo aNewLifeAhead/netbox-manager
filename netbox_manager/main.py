@@ -1,3 +1,5 @@
+import sys
+
 import click
 
 from netbox_manager.client import get_netbox
@@ -18,11 +20,18 @@ def cli():
 def test():
     """Test the NetBox API connection."""
 
-    nb = get_netbox()
-    status = nb.status()
+    try:
+        click.echo("Getting NetBox client...", err=True)
+        nb = get_netbox()
 
-    click.echo("✅ Connected to NetBox")
-    click.echo(f"Version : {status.get('netbox-version', 'Unknown')}")
+        click.echo("Checking NetBox status...", err=True)
+        status = nb.status()
+
+        click.echo("✅ Connected to NetBox")
+        click.echo(f"Version : {status.get('netbox-version', 'Unknown')}")
+    except Exception as error:
+        click.echo(f"❌ NetBox connection failed: {error}", err=True)
+        raise SystemExit(1)
 
 
 # --------------------------------------------------------------------
@@ -31,7 +40,7 @@ def test():
 
 @cli.group()
 def sync():
-    """Synchronise CSV data into NetBox."""
+    """Synchronise workbook data into NetBox."""
     pass
 
 
@@ -39,17 +48,30 @@ def sync():
 @click.option(
     "--dry-run",
     is_flag=True,
-    help="Show what would be changed without writing to NetBox."
+    help="Show what would be changed without writing to NetBox.",
 )
 def sync_wallplates_command(dry_run):
-    """Import wall plates."""
+    """Sync wall plates from the FIX8 Network workbook."""
 
-    nb = get_netbox()
+    try:
+        click.echo(">>> Entered sync_wallplates_command")
+        click.echo(">>> Getting NetBox client")
+        sys.stdout.flush()
 
-    sync_wallplates(
-        nb,
-        dry_run=dry_run,
-    )
+        nb = get_netbox()
+
+        click.echo(">>> Calling sync_wallplates")
+        sys.stdout.flush()
+
+        sync_wallplates(
+            nb,
+            dry_run=dry_run,
+        )
+
+        click.echo(">>> Finished sync_wallplates")
+    except Exception as error:
+        click.echo(f"❌ Wall plate sync failed: {error}", err=True)
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
